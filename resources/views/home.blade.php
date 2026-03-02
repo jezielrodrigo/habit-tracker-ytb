@@ -1,22 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ config('app.name') }}</title>
 
-<h1>
-    Welcome to the Home page
-</h1>
-<p> Seus hábitos são: </p>
-<p> Olá, {{ $name }} </p>
-<ul>
-    @foreach ($habits as $item)
-        <li>
-            {{ $item }}
-        </li>  
-    @endforeach
-
-</ul>
-
-@auth
-    <p>Logado</p>    
-@endauth
-
-@guest
-    <p>Não esta logado</p>
-@endguest
+    @vite('resources/css/app.css')
+</head>
+<body>
+    <h1 class="text-3xl font-bold underline text-green-500">
+        Hello World!
+    </h1>
+</body>
+</html>
