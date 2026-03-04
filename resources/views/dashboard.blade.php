@@ -1,11 +1,6 @@
 <x-layout>
-    <main class="py-10 min-h-[calc(100vh-160px)]">
-        <h1 class="font-bold text-4xl text-center">
-            Dashboard
-        </h1>
-
-        <a href="{{ route('habits.create') }}" class="p-2 border-2 bg-white font-bold block">Cadastrar Hábito</a>
-
+    <main class="py-10 min-h-[calc(100vh-160px)] px-4">
+        <x-navbar />
         @session('success')
             <div class="flex">
                 <p class="bg-green-100 border-2 border-green-400 text-green-700 p-3 mb-4">
@@ -15,28 +10,18 @@
         @endsession
 
         <div>
-            <h2 class="text-xl mt-4">Listagem dos Hábitos</h2>
+          <h2 class="text-lg mt-8 mb-2">
+            {{ date('d/m/Y') }}
+          </h2>
 
             <ul class="flex flex-col gap-2">
                 @forelse ($habits as $item)
-                    <li class="pl-4">
+                    <li class="habit-shadow-lg p-2 bg-[#FFDAAC]">
                         <div class="flex gap-2 items-center">
-                            <p class="font-bold text-xl">
-                                - {{ $item->name }}
-                                <span class="font-light text-md">
-                                    ({{ $item->habitLogs->count() }})
-                                </span>
-                            </p>
-                          <a class="bg-white p-1 hover:opacity-50" href="{{ route('habits.edit', $item->id) }}">
-                            <x-icons.edit />
-                          </a>
-                            <form action="{{ route('habits.destroy', $item) }}" method="POST">
-                              @csrf
-                              @method('DELETE')
-                              <button type="submit" class="bg-red-500 text-white p-1 hover:opacity-50 cursor-pointer">
-                                <x-icons.trash />
-                              </button>
-                            </form>
+                          <input type="checkbox" class="w-5 h-5" {{ $item->is_completed ? 'checked' : '' }} disabled />
+                          <p class="font-bold text-lg">
+                            {{ $item->name }}
+                          </p>
                         </div>
                     </li>
                 @empty
