@@ -9,7 +9,7 @@
                 @csrf
 
                 <div class="flex flex-col gap-2 mb-4">
-                    <label for="name">E-mail</label>
+                    <label for="name">Nome do Hábito</label>
                     <input type="text" class="bg-white p-2 border-2 @error('name') border-red-500 @enderror" name="name"
                         placeholder="Ex: Ler 10 página">
                     @error('name')
