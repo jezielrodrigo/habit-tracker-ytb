@@ -17,7 +17,7 @@
                     @enderror
                 </div>
                 <div class="flex flex-col gap-2 mb-4">
-                    <label for="email">Nome</label>
+                    <label for="email">E-mail</label>
                     <input type="email" class="bg-white p-2 border-2 @error('email') border-red-500 @enderror"
                         name="email" placeholder="your@email.com">
                     @error('email')
