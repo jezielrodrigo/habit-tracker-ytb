@@ -15,11 +15,12 @@ use Illuminate\View\View;
 class HabitController extends Controller
 {
     use AuthorizesRequests;
+
     public function index(): View
     {
         $habits = Auth::user()->habits()
-        ->with('habitLogs')
-        ->get();
+            ->with('habitLogs')
+            ->get();
 
         return view('dashboard', compact('habits'));
     }
@@ -107,7 +108,7 @@ class HabitController extends Controller
             ->first();
 
         // 3.Validar se nessa data já existe um registro
-        if($log){
+        if ($log) {
             // 4.Se existir, remover o registro
             $log->delete();
             $message = 'Hábito desmarcado.';
@@ -126,4 +127,19 @@ class HabitController extends Controller
             ->with('success', $message);
     }
 
+    public function history(): View
+    {
+        $selectedYear = Carbon::now()->year;
+
+        $startDate = Carbon::create($selectedYear, 1, 1);
+        $endDate = Carbon::create($selectedYear, 12, 31, 23, 59, 59);
+
+        $habits = Auth::user()->habits()
+            ->with(['habitLogs' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('completed_at', [$startDate, $endDate]);
+            }])
+            ->get();
+
+        return view('habits.history', compact('habits', 'selectedYear'));
+    }
 }
