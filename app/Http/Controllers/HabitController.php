@@ -8,7 +8,6 @@ use App\Models\Habit;
 use App\Models\HabitLog;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -83,7 +82,7 @@ class HabitController extends Controller
 
         return redirect()
             ->route('habits.index')
-            ->with('success', 'Hábitos removidos com sucesso!');
+            ->with('warning', 'Hábitos removidos com sucesso!');
     }
 
     public function settings()
@@ -95,41 +94,40 @@ class HabitController extends Controller
 
     public function toggle(Habit $habit)
     {
-        // 1.Verificar se o usuário autenticado é o dono do hábito
         $this->authorize('toggle', $habit);
-
-        // 2.Pegar a data de hoje
         $today = Carbon::today()->toDateString();
-
-        // 2.1 Pegar o log
         $log = HabitLog::query()
             ->where('habit_id', $habit->id)
             ->where('completed_at', $today)
             ->first();
-
-        // 3.Validar se nessa data já existe um registro
         if ($log) {
             // 4.Se existir, remover o registro
             $log->delete();
+            $alert = 'warning';
             $message = 'Hábito desmarcado.';
         } else {
-            // 5.Se não existir, criar o registro
-            HabitLog::create([
-                'user_id' => Auth::user()->id,
-                'habit_id' => $habit->id,
-                'completed_at' => $today,
-            ]);
+            HabitLog::query()
+                ->create([
+                    'user_id' => Auth::user()->id,
+                    'habit_id' => $habit->id,
+                    'completed_at' => $today,
+                ]);
+            $alert = 'success';
             $message = 'Hábito concluído 👏';
         }
-        // 6.Retornar para a página anterior
         return redirect()
             ->route('habits.index')
-            ->with('success', $message);
+            ->with($alert, $message);
     }
 
-    public function history(): View
+    public function history(?int $year = null): View
     {
-        $selectedYear = Carbon::now()->year;
+        $selectedYear = $year ?? Carbon::now()->year;
+        $avaliableYears = range(2024, Carbon::now()->year);
+
+        if(!in_array($selectedYear, $avaliableYears)) {
+            abort(404, 'Ano inválido.');
+        }
 
         $startDate = Carbon::create($selectedYear, 1, 1);
         $endDate = Carbon::create($selectedYear, 12, 31, 23, 59, 59);
@@ -140,6 +138,6 @@ class HabitController extends Controller
             }])
             ->get();
 
-        return view('habits.history', compact('habits', 'selectedYear'));
+        return view('habits.history', compact('habits', 'selectedYear', 'avaliableYears'));
     }
 }

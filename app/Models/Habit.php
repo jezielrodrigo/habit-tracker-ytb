@@ -88,7 +88,6 @@ class Habit extends Model
                 $currentWeek = [];
             }
         }
-
         return $weeks;
     }
 }
